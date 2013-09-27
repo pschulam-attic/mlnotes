@@ -1,0 +1,92 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{enumerate}
+\usepackage{fullpage}
+
+\title{The Gaussian Distribution}
+
+\author{Peter Schulam}
+
+\newcommand{\onehalf}{\ensuremath{\frac{1}{2}}}
+\newcommand{\bigexp}[1]{\ensuremath{\exp \left\{#1\right\}}}
+\newcommand{\nsum}[2]{\ensuremath{\sum_{#1 = 1}^{#2}}}
+
+\newcommand{\data}{\ensuremath{D}}
+\newcommand{\iid}{i.i.d.}
+\newcommand{\datan}{\ensuremath{n}}
+\newcommand{\snormd}[3]{\ensuremath{\mathcal{N}(#1; #2, #3)}}
+\newcommand{\fnormd}[3]{\ensuremath{(2\pi#3)^{\onehalf} \bigexp{-\frac{1}{2 #3} (#1 - #2)^2}}}
+\newcommand{\fnorml}[4]{\ensuremath{(2 \pi #4)^{\frac{#1}{2}} \bigexp{ - \frac{1}{2 #4} \sum_{i=1}^{#1} (x_i - #3)}}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  The normal distribution is fundamental to many of the methods that
+  have been developed in both statistics and machine learning, and so it
+  is important to have a strong understanding of the ways in which it is
+  commonly manipulated. In this note, I discuss some of the common
+  transformations of the normal distribution, and also derive a number
+  of posterior distributions under various priors.
+\end{abstract}
+
+\section{Likelihood}
+
+Typically, when working with the normal distribution, we are using it
+to assess the likelihood of a collection of observations. Suppose we
+are given data \data{}, which consists of \datan{} \iid{} observations
+assumed to have been drawn from a normal
+\snormd{x}{\mu}{\sigma^2}. The likelihood can be written out in full
+as
+
+\begin{align}
+  p(\data | \mu, \sigma^2) &= \prod_{i=1}^n \fnormd{x_i}{\mu}{\sigma^2}
+\end{align}
+
+This can be written more compactly as
+
+\begin{align}
+  p(\data | \mu, \sigma^2) &= \fnorml{n}{x_i}{\mu}{\sigma^2}
+  \label{eq:n-normal-likelihood}
+\end{align}
+
+Now, define the sample mean and standard deviation
+
+\begin{align}
+  \bar{x} &= \frac{1}{n} \nsum{i}{n} x_i \\
+  s^2 &= \frac{1}{n} \nsum{i}{n} (x_i - \bar{x})^2
+\end{align}
+
+The full likelihood shown in equation \ref{eq:n-normal-likelihood} is
+often rewritten in terms of the sample mean and sample standard
+deviation. To see how the likelihood is rewritten, I will work only
+with the sum in the exponent of equation \ref{eq:n-normal-likelihood}.
+
+\begin{align}
+  \nsum{i}{n} (x_i - \mu)^2
+  &= \nsum{i}{n} \left(
+    (x_i - \bar{x}) - (\mu - \bar{x})
+  \right)^2 \\
+  &= \nsum{i}{n} (x_i - \bar{x})^2
+  + \nsum{i}{n} (\mu - \bar{x})^2
+  - 2 \nsum{i}{n} (x_i - \bar{x})(\mu - \bar{x})
+  \label{eq:likelihood-expanded-sum} \\
+  &= ns^2 + n(\mu - \bar{x})^2
+\end{align}
+
+To see why the final equality holds, we can check that the last term
+in equation \ref{eq:likelihood-expanded-sum} is $0$
+
+\begin{align}
+  \nsum{i}{n} (x_i - \bar{x})(\mu - \bar{x})
+  &= (\mu - \bar{x}) \left(
+    \left( \nsum{i}{n} x_i \right) - n \bar{x}
+  \right) \\
+  &= (\mu - \bar{x}) \left(
+    n \bar{x} - n \bar{x}
+  \right)
+  = 0
+\end{align}
+
+\end{document}
